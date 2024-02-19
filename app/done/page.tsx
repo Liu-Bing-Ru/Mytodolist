@@ -1,6 +1,6 @@
 "use client";
-//page.tsx
 
+import { METHODS } from "http";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -48,37 +48,7 @@ export default function Home() {
       setError("fail to delete task");
     }
   };
-  //新增部分Checkbutton
-  const handleCheck = async (
-    id: string,
-    task: string,
-    description: string,
-    done: boolean
-  ) => {
-    alert("任務已經完成");
-    console.log("一開始done狀態", done); //default false
-    done = true;
-    try {
-      console.log("這裡是ID", id);
-      console.log("進去抓資料中....");
-      await fetch(`/api/tasks`, {
-        method: "PUT",
-        /*headers: {
-          "Content-Type": "application/json",
-        },*/
-        body: JSON.stringify({
-          id: id,
-          task: task,
-          description: description,
-          done: done,
-        }),
-      });
-    } catch (error) {
-      console.log("Error:", error);
-      setError("fail to Update done status");
-    }
-  };
-
+  /*
   return (
     <div>
       {error && <p className="py-4 text-red-500">{error}</p>}
@@ -88,16 +58,14 @@ export default function Home() {
         tasks.map((task) => (
           <div
             key={task.$id}
-            className="p-4 my-2 rounded-md border-b leading-8 bg-gray-400"
+            className="p-4 my-2 bg-gray-400 rounded-md border-b leading-8"
           >
             <div className="font-bold">{task.task}</div>
             <div>{task.description}</div>
             <div className="flex gap-4 mt-4 justify-end">
               <button
-                className="bg-green-300 text-yellow-900 px-4 py-2 rounded-md uppercase text-sm font-bold tracking-widest"
-                onClick={() =>
-                  handleCheck(task.$id, task.task, task.description, task.done)
-                }
+                className="bg-green-500 text-white px-4 py-2 rounded-md uppercase text-sm font-bold tracking-widest"
+                onClick={() => handleDelete(task.$id)}
               >
                 Done
               </button>
@@ -120,6 +88,46 @@ export default function Home() {
     </div>
   );
 }
-/*
-這邊新增button 按鈕
 */
+  return (
+    <div>
+      {error && <p className="py-4 text-red-500">{error}</p>}
+      {isLoading ? (
+        <p>Loading tasks.....</p>
+      ) : (
+        tasks.map(
+          (task) =>
+            task.done === true && (
+              <div
+                key={task.$id}
+                className="p-4 my-2 bg-gray-400 rounded-md border-b leading-8"
+              >
+                <div className="font-bold">{task.task}</div>
+                <div>{task.description}</div>
+                <div className="flex gap-4 mt-4 justify-end">
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded-md uppercase text-sm font-bold tracking-widest"
+                    onClick={() => handleDelete(task.$id)}
+                  >
+                    Done
+                  </button>
+                  <Link
+                    className="bg-slate-200 px-4 py-2 rounded-md uppercase text-sm font-bold tracking-widest"
+                    href={`/edit/${task.$id}`}
+                  >
+                    Edit
+                  </Link>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded-md uppercase text-sm font-bold tracking-widest"
+                    onClick={() => handleDelete(task.$id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )
+        )
+      )}
+    </div>
+  );
+}
